@@ -16,6 +16,14 @@
         <kryo.version>4.0.2</kryo.version>
         <protostuff.version>1.7.2</protostuff.version>
         <hessian.version>4.0.65</hessian.version>
+<!--        netty-->
+        <netty.version>4.1.42.Final</netty.version>
+<!--        guava-->
+        <guava.version>30.1.1-jre</guava.version>
+<!--        spring-->
+        <spring.version>5.2.7.RELEASE</spring.version>
+<!--        zookeeper-->
+        <curator-version>4.2.0</curator-version>
     </properties>
     <modules>
         <module>api</module>
@@ -25,6 +33,23 @@
         <module>server</module>
     </modules>
     <dependencies>
+        <!--zookeeper-->
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-framework</artifactId>
+            <version>${curator-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-recipes</artifactId>
+            <version>${curator-version}</version>
+        </dependency>
+        <!-- guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
