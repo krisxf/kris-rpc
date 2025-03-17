@@ -1,5 +1,6 @@
 package com.kris.remote.transport;
 
+import com.kris.extension.SPI;
 import com.kris.remote.dto.RpcRequest;
 
 /**
@@ -8,6 +9,7 @@ import com.kris.remote.dto.RpcRequest;
  * @Author: kris
  * @Create: 2025-03-16 15:38
  **/
+@SPI
 public interface RpcRequestTransport {
     /**
      * send rpc request to server and get result

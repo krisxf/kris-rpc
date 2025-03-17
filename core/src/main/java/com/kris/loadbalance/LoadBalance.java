@@ -1,5 +1,6 @@
 package com.kris.loadbalance;
 
+import com.kris.extension.SPI;
 import com.kris.remote.dto.RpcRequest;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
  * @Author: kris
  * @Create: 2025-03-16 15:06
  **/
+@SPI
 public interface LoadBalance {
     /**
      * 从存在服务接口中选择一个

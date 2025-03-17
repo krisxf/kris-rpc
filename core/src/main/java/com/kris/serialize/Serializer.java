@@ -1,11 +1,14 @@
 package com.kris.serialize;
 
+import com.kris.extension.SPI;
+
 /**
  * @Program: kris-rpc
  * @Description: 序列化接口
  * @Author: kris
  * @Create: 2025-03-06 21:20
  **/
+@SPI
 public interface Serializer {
     /**
      * 序列化

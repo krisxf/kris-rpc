@@ -1,5 +1,7 @@
 package com.kris.register;
 
+import com.kris.extension.SPI;
+
 import java.net.InetSocketAddress;
 
 /**
@@ -8,6 +10,7 @@ import java.net.InetSocketAddress;
  * @Author: kris
  * @Create: 2025-03-16 15:46
  **/
+@SPI
 public interface ServiceRegistry {
 
     /**

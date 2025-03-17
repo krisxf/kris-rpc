@@ -1,5 +1,6 @@
 package com.kris.register;
 
+import com.kris.extension.SPI;
 import com.kris.remote.dto.RpcRequest;
 
 import java.net.InetSocketAddress;
@@ -10,7 +11,7 @@ import java.net.InetSocketAddress;
  * @Author: kris
  * @Create: 2025-03-16 15:45
  **/
-
+@SPI
 public interface ServiceDiscovery {
     /**
      * 查询服务
