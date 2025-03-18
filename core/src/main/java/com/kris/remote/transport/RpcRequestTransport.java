@@ -12,10 +12,10 @@ import com.kris.remote.dto.RpcRequest;
 @SPI
 public interface RpcRequestTransport {
     /**
-     * send rpc request to server and get result
+     * 向服务器发送rpc请求并获取结果
      *
-     * @param rpcRequest message body
-     * @return data from server
+     * @param rpcRequest 消息体
+     * @return 来自服务器的数据
      */
     Object sendRpcRequest(RpcRequest rpcRequest);
 }

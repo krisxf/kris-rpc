@@ -10,7 +10,7 @@ import java.util.zip.GZIPOutputStream;
 
 /**
  * @Program: kris-rpc
- * @Description: Gzip
+ * @Description: Gzip 压缩方式
  * @Author: kris
  * @Create: 2025-03-17 21:12
  **/

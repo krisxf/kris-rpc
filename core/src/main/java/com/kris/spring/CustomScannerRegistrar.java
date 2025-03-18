@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * @Program: kris-rpc
- * @Description:
+ * @Description: 执行时机是在 Spring 容器加载配置类、扫描 Bean 定义阶段，即在所有 Bean 实例化之前，用于动态添加或修改 Bean 定义。
  * @Author: kris
  * @Create: 2025-03-17 21:14
  **/
@@ -44,17 +44,17 @@ public class CustomScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
             rpcScanBasePackages = new String[]{((StandardAnnotationMetadata) annotationMetadata).getIntrospectedClass().getPackage().getName()};
         }
         // 扫描RpcProvider注释
-        CustomScanner rpcServiceScanner = new CustomScanner(beanDefinitionRegistry, RpcProvider.class);
+        CustomScanner rpcProviderScanner = new CustomScanner(beanDefinitionRegistry, RpcProvider.class);
         // 扫描组件注释
         CustomScanner springBeanScanner = new CustomScanner(beanDefinitionRegistry, Component.class);
         if (resourceLoader != null) {
-            rpcServiceScanner.setResourceLoader(resourceLoader);
+            rpcProviderScanner.setResourceLoader(resourceLoader);
             springBeanScanner.setResourceLoader(resourceLoader);
         }
         int springBeanAmount = springBeanScanner.scan(SPRING_BEAN_BASE_PACKAGE);
         log.info("springBeanScanner扫描的数量 [{}]", springBeanAmount);
-        int rpcServiceCount = rpcServiceScanner.scan(rpcScanBasePackages);
-        log.info("rpcServiceScanner扫描的数量 [{}]", rpcServiceCount);
+        int rpcProviderCount = rpcProviderScanner.scan(rpcScanBasePackages);
+        log.info("rpcProviderScanner扫描的数量 [{}]", rpcProviderCount);
 
     }
 

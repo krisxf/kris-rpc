@@ -1,0 +1,1 @@
+loadBalance=com.kris.loadbalance.loadbalancer.ConsistentHashLoadBalance

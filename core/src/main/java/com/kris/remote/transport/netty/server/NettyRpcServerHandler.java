@@ -47,7 +47,7 @@ public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
                     rpcMessage.setData(RpcConstants.PONG);
                 } else {
                     RpcRequest rpcRequest = (RpcRequest) ((RpcMessage) msg).getData();
-                    // Execute the target method (the method the client needs to execute) and return the method result
+                    // 执行目标方法（客户端需要执行的方法）并返回方法结果
                     Object result = rpcRequestHandler.handle(rpcRequest);
                     log.info(String.format("server get result: %s", result.toString()));
                     rpcMessage.setMessageType(RpcConstants.RESPONSE_TYPE);
@@ -63,7 +63,7 @@ public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
                 ctx.writeAndFlush(rpcMessage).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
             }
         } finally {
-            //Ensure that ByteBuf is released, otherwise there may be memory leaks
+            //确保ByteBuf已发布，否则可能会出现内存泄漏
             ReferenceCountUtil.release(msg);
         }
     }

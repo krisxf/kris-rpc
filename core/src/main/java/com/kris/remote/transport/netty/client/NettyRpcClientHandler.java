@@ -35,7 +35,7 @@ public class NettyRpcClientHandler extends ChannelInboundHandlerAdapter {
     }
 
     /**
-     * Read the message transmitted by the server
+     * 读取服务器发送的消息
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
@@ -76,7 +76,7 @@ public class NettyRpcClientHandler extends ChannelInboundHandlerAdapter {
     }
 
     /**
-     * Called when an exception occurs in processing a client message
+     * 当处理客户端消息时发生异常时调用
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {

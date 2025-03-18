@@ -26,22 +26,22 @@ import java.util.Arrays;
 @Slf4j
 public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
     public RpcMessageDecoder() {
-        // lengthFieldOffset: magic code is 4B, and version is 1B, and then full length. so value is 5
-        // lengthFieldLength: full length is 4B. so value is 4
-        // lengthAdjustment: full length include all data and read 9 bytes before, so the left length is (fullLength-9). so values is -9
-        // initialBytesToStrip: we will check magic code and version manually, so do not strip any bytes. so values is 0
+        // lengthFieldOffset：魔术码是4B，版本是1B，然后是全长。所以值是5
+        // length字段长度：全长为4B。所以值是4
+        // lengthAdjustment：全长包含所有数据，并读取9个字节之前的数据，因此左侧长度为（fullLength-9）。所以值是-9
+        // initialBytesToStrip：我们将手动检查魔术代码和版本，所以不要删除任何字节。所以值为0
         this(RpcConstants.MAX_FRAME_LENGTH, 5, 4, -9, 0);
     }
 
     /**
-     * @param maxFrameLength      Maximum frame length. It decide the maximum length of data that can be received.
-     *                            If it exceeds, the data will be discarded.
-     * @param lengthFieldOffset   Length field offset. The length field is the one that skips the specified length of byte.
-     * @param lengthFieldLength   The number of bytes in the length field.
-     * @param lengthAdjustment    The compensation value to add to the value of the length field
-     * @param initialBytesToStrip Number of bytes skipped.
-     *                            If you need to receive all of the header+body data, this value is 0
-     *                            if you only want to receive the body data, then you need to skip the number of bytes consumed by the header.
+     * @param maxFrameLength      最大帧长。它决定了可以接收的最大数据长度。
+     *                            如果超过，数据将被丢弃。
+     * @param lengthFieldOffset   长度字段偏移。长度字段是跳过指定字节长度的字段。
+     * @param lengthFieldLength   长度字段中的字节数。
+     * @param lengthAdjustment    要添加到长度字段值的补偿值
+     * @param initialBytesToStrip 跳过的字节数。
+     *                            如果需要接收所有标头+正文数据，则此值为0
+     *                            如果你只想接收正文数据，那么你需要跳过标头消耗的字节数。
      */
     public RpcMessageDecoder(int maxFrameLength, int lengthFieldOffset, int lengthFieldLength,
                              int lengthAdjustment, int initialBytesToStrip) {
@@ -70,11 +70,11 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
 
 
     private Object decodeFrame(ByteBuf in) {
-        // note: must read ByteBuf in order
+        // 注意：必须按顺序阅读ByteBuf
         checkMagicNumber(in);
         checkVersion(in);
         int fullLength = in.readInt();
-        // build RpcMessage object
+        // 构建RpcMessage对象
         byte messageType = in.readByte();
         byte codecType = in.readByte();
         byte compressType = in.readByte();
@@ -95,12 +95,12 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
         if (bodyLength > 0) {
             byte[] bs = new byte[bodyLength];
             in.readBytes(bs);
-            // decompress the bytes
+            // 解压缩字节
             String compressName = CompressTypeEnum.getName(compressType);
                 Compress compress = ExtensionLoader.getExtensionLoader(Compress.class)
                     .getExtension(compressName);
             bs = compress.decompress(bs);
-            // deserialize the object
+            // 反序列化对象
             String codecName = SerializationTypeEnum.getName(rpcMessage.getCodec());
             log.info("codec name: [{}] ", codecName);
             Serializer serializer = ExtensionLoader.getExtensionLoader(Serializer.class)
@@ -118,7 +118,7 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
     }
 
     private void checkVersion(ByteBuf in) {
-        // read the version and compare
+        // 阅读版本并进行比较
         byte version = in.readByte();
         if (version != RpcConstants.VERSION) {
             throw new RuntimeException("version isn't compatible" + version);
@@ -126,7 +126,7 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
     }
 
     private void checkMagicNumber(ByteBuf in) {
-        // read the first 4 bit, which is the magic number, and compare
+        // 读取前4位，即幻数，并进行比较
         int len = RpcConstants.MAGIC_NUMBER.length;
         byte[] tmp = new byte[len];
         in.readBytes(tmp);

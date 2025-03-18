@@ -25,10 +25,10 @@ public class ChannelProvider {
 
     public Channel get(InetSocketAddress inetSocketAddress) {
         String key = inetSocketAddress.toString();
-        // determine if there is a connection for the corresponding address
+        // 确定是否存在对应地址的连接
         if (channelMap.containsKey(key)) {
             Channel channel = channelMap.get(key);
-            // if so, determine if the connection is available, and if so, get it directly
+            // 如果是，确定连接是否可用，直接获取
             if (channel != null && channel.isActive()) {
                 return channel;
             } else {

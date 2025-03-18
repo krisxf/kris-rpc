@@ -31,7 +31,7 @@ public class RpcClientProxy implements InvocationHandler {
     private static final String INTERFACE_NAME = "interfaceName";
 
     /**
-     * Used to send requests to the server.And there are two implementations: socket and netty
+     * 用于向服务器发送请求。有两种实现：socket和netty
      */
     private final RpcRequestTransport rpcRequestTransport;
     private final RpcServiceConfig rpcServiceConfig;
@@ -48,7 +48,7 @@ public class RpcClientProxy implements InvocationHandler {
     }
 
     /**
-     * get the proxy object
+     * 获取代理对象
      */
     @SuppressWarnings("unchecked")
     public <T> T getProxy(Class<T> clazz) {
@@ -56,8 +56,8 @@ public class RpcClientProxy implements InvocationHandler {
     }
 
     /**
-     * This method is actually called when you use a proxy object to call a method.
-     * The proxy object is the object you get through the getProxy method.
+     * 当使用代理对象调用方法时，实际上会调用此方法
+     * 代理对象是通过getProxy方法获得的对象。
      */
     @SneakyThrows
     @SuppressWarnings("unchecked")

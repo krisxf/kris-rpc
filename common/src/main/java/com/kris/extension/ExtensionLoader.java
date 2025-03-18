@@ -46,7 +46,7 @@ public final class ExtensionLoader<T> {
         if (type.getAnnotation(SPI.class) == null) {
             throw new IllegalArgumentException("Extension type must be annotated by @SPI");
         }
-        // firstly get from cache, if not hit, create one
+        // 首先从缓存中获取，如果没有命中，则创建一个
         ExtensionLoader<S> extensionLoader = (ExtensionLoader<S>) EXTENSION_LOADERS.get(type);
         if (extensionLoader == null) {
             EXTENSION_LOADERS.putIfAbsent(type, new ExtensionLoader<S>(type));
@@ -59,13 +59,13 @@ public final class ExtensionLoader<T> {
         if (StringUtil.isBlank(name)) {
             throw new IllegalArgumentException("Extension name should not be null or empty.");
         }
-        // firstly get from cache, if not hit, create one
+        // 首先从缓存中获取，如果没有命中，则创建一个
         Holder<Object> holder = cachedInstances.get(name);
         if (holder == null) {
             cachedInstances.putIfAbsent(name, new Holder<>());
             holder = cachedInstances.get(name);
         }
-        // create a singleton if no instance exists
+        // 如果不存在实例，则创建单例
         Object instance = holder.get();
         if (instance == null) {
             synchronized (holder) {
@@ -80,7 +80,7 @@ public final class ExtensionLoader<T> {
     }
 
     private T createExtension(String name) {
-        // load all extension classes of type T from file and get specific one by name
+        // 从文件中加载所有类型为T的扩展类，并按名称获取特定的扩展类
         Class<?> clazz = getExtensionClasses().get(name);
         if (clazz == null) {
             throw new RuntimeException("No such extension of name " + name);
@@ -98,15 +98,15 @@ public final class ExtensionLoader<T> {
     }
 
     private Map<String, Class<?>> getExtensionClasses() {
-        // get the loaded extension class from the cache
+        // 从缓存中获取加载的扩展类
         Map<String, Class<?>> classes = cachedClasses.get();
-        // double check
+        // 双重检查
         if (classes == null) {
             synchronized (cachedClasses) {
                 classes = cachedClasses.get();
                 if (classes == null) {
                     classes = new HashMap<>();
-                    // load all extensions from our extensions directory
+                    // 从扩展目录加载所有扩展
                     loadDirectory(classes);
                     cachedClasses.set(classes);
                 }
@@ -135,12 +135,12 @@ public final class ExtensionLoader<T> {
     private void loadResource(Map<String, Class<?>> extensionClasses, ClassLoader classLoader, URL resourceUrl) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(resourceUrl.openStream(), UTF_8))) {
             String line;
-            // read every line
+            // 阅读每一行
             while ((line = reader.readLine()) != null) {
-                // get index of comment
+                // 获取评论索引
                 final int ci = line.indexOf('#');
                 if (ci >= 0) {
-                    // string after # is comment so we ignore it
+                    // 后面的字符串是注释，所以我们忽略它
                     line = line.substring(0, ci);
                 }
                 line = line.trim();
@@ -149,7 +149,7 @@ public final class ExtensionLoader<T> {
                         final int ei = line.indexOf('=');
                         String name = line.substring(0, ei).trim();
                         String clazzName = line.substring(ei + 1).trim();
-                        // our SPI use key-value pair so both of them must not be empty
+                        // 我们的SPI使用键值对，因此它们都不能为空
                         if (name.length() > 0 && clazzName.length() > 0) {
                             Class<?> clazz = classLoader.loadClass(clazzName);
                             extensionClasses.put(name, clazz);

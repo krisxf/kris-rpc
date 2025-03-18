@@ -11,9 +11,18 @@ import com.kris.extension.SPI;
 @SPI
 public interface Compress {
 
+    /**
+     * 压缩
+     * @param bytes 数据
+     * @return 返回压缩后的
+     */
     byte[] compress(byte[] bytes);
 
-
+    /**
+     * 解压缩
+     * @param bytes 数据
+     * @return 返回压缩后的
+     */
     byte[] decompress(byte[] bytes);
 }
 
