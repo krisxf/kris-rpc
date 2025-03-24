@@ -22,6 +22,6 @@ public class HelloServiceImpl implements HelloService {
     @Override
     public String sayHello(String greeting) {
         log.info("收到的问候词为 ： {}",greeting);
-        return "hello,world";
+        return greeting;
     }
 }

@@ -37,7 +37,7 @@ public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         try {
             if (msg instanceof RpcMessage) {
-                log.info("server receive msg: [{}] ", msg);
+                log.info("服务收到信息: [{}] ", msg);
                 byte messageType = ((RpcMessage) msg).getMessageType();
                 RpcMessage rpcMessage = new RpcMessage();
                 rpcMessage.setCodec(SerializationTypeEnum.HESSIAN.getCode());
@@ -49,7 +49,7 @@ public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
                     RpcRequest rpcRequest = (RpcRequest) ((RpcMessage) msg).getData();
                     // 执行目标方法（客户端需要执行的方法）并返回方法结果
                     Object result = rpcRequestHandler.handle(rpcRequest);
-                    log.info(String.format("server get result: %s", result.toString()));
+                    log.info(String.format("服务获取结果: %s", result.toString()));
                     rpcMessage.setMessageType(RpcConstants.RESPONSE_TYPE);
                     if (ctx.channel().isActive() && ctx.channel().isWritable()) {
                         RpcResponse<Object> rpcResponse = RpcResponse.success(result, rpcRequest.getRequestId());
@@ -57,7 +57,7 @@ public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
                     } else {
                         RpcResponse<Object> rpcResponse = RpcResponse.fail(RpcResponseCodeEnum.FAIL);
                         rpcMessage.setData(rpcResponse);
-                        log.error("not writable now, message dropped");
+                        log.error("现在不可写, 丢弃信息");
                     }
                 }
                 ctx.writeAndFlush(rpcMessage).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
@@ -73,7 +73,7 @@ public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
         if (evt instanceof IdleStateEvent) {
             IdleState state = ((IdleStateEvent) evt).state();
             if (state == IdleState.READER_IDLE) {
-                log.info("idle check happen, so close the connection");
+                log.info("进行空闲检查，因此关闭连接");
                 ctx.close();
             }
         } else {
@@ -83,7 +83,7 @@ public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        log.error("server catch exception");
+        log.error("服务器捕获异常");
         cause.printStackTrace();
         ctx.close();
     }

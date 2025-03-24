@@ -48,7 +48,7 @@ public class ZkServiceProviderImpl implements ServiceProvider {
         }
         registeredService.add(rpcServiceName);
         serviceMap.put(rpcServiceName, rpcServiceConfig.getService());
-        log.info("Add service: {} and interfaces:{}", rpcServiceName, rpcServiceConfig.getService().getClass().getInterfaces());
+        log.info("添加服务: {} 和接口:{}", rpcServiceName, rpcServiceConfig.getService().getClass().getInterfaces());
     }
 
     @Override

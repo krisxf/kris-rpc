@@ -33,7 +33,7 @@ public final class PropertiesFileUtil {
             properties = new Properties();
             properties.load(inputStreamReader);
         } catch (IOException e) {
-            log.error("occur exception when read properties file [{}]", fileName);
+            log.error("当读取配置文件的时候出现异常 [{}]", fileName);
         }
         return properties;
     }

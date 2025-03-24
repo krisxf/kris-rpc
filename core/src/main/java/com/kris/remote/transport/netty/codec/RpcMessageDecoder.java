@@ -57,7 +57,7 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
                 try {
                     return decodeFrame(frame);
                 } catch (Exception e) {
-                    log.error("Decode frame error!", e);
+                    log.error("解码错误!", e);
                     throw e;
                 } finally {
                     frame.release();
@@ -102,7 +102,7 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
             bs = compress.decompress(bs);
             // 反序列化对象
             String codecName = SerializationTypeEnum.getName(rpcMessage.getCodec());
-            log.info("codec name: [{}] ", codecName);
+            log.info("序列化名称: [{}] ", codecName);
             Serializer serializer = ExtensionLoader.getExtensionLoader(Serializer.class)
                     .getExtension(codecName);
             if (messageType == RpcConstants.REQUEST_TYPE) {
@@ -121,7 +121,7 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
         // 阅读版本并进行比较
         byte version = in.readByte();
         if (version != RpcConstants.VERSION) {
-            throw new RuntimeException("version isn't compatible" + version);
+            throw new RuntimeException("版本不匹配" + version);
         }
     }
 
@@ -132,7 +132,7 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
         in.readBytes(tmp);
         for (int i = 0; i < len; i++) {
             if (tmp[i] != RpcConstants.MAGIC_NUMBER[i]) {
-                throw new IllegalArgumentException("Unknown magic code: " + Arrays.toString(tmp));
+                throw new IllegalArgumentException("不知道的魔数: " + Arrays.toString(tmp));
             }
         }
     }

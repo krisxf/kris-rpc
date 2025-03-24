@@ -28,14 +28,20 @@ public class RpcMessageEncoder extends MessageToByteEncoder<RpcMessage> {
     @Override
     protected void encode(ChannelHandlerContext ctx, RpcMessage rpcMessage, ByteBuf out) {
         try {
+            // 魔数
             out.writeBytes(RpcConstants.MAGIC_NUMBER);
+            // 版本
             out.writeByte(RpcConstants.VERSION);
             // 留出一个地方写全长的值
             out.writerIndex(out.writerIndex() + 4);
             byte messageType = rpcMessage.getMessageType();
+            // 消息类型
             out.writeByte(messageType);
+            // 序列化方式
             out.writeByte(rpcMessage.getCodec());
+            // 压缩方式
             out.writeByte(CompressTypeEnum.GZIP.getCode());
+            // 自动增长的id
             out.writeInt(ATOMIC_INTEGER.getAndIncrement());
             // 构建全长
             byte[] bodyBytes = null;

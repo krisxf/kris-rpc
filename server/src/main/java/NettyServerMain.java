@@ -1,4 +1,7 @@
+import com.kris.HelloService;
 import com.kris.annotation.RpcScan;
+import com.kris.config.RpcServiceConfig;
+import com.kris.impl.HelloServiceImpl;
 import com.kris.remote.transport.netty.server.NettyRpcServer;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -15,6 +18,10 @@ public class NettyServerMain {
         // 注册服务
         AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(NettyServerMain.class);
         NettyRpcServer nettyRpcServer = (NettyRpcServer) applicationContext.getBean("nettyRpcServer");
+        HelloService helloService = new HelloServiceImpl();
+        RpcServiceConfig rpcServiceConfig = RpcServiceConfig.builder()
+                .service(helloService).build();
+        nettyRpcServer.registerService(rpcServiceConfig);
         nettyRpcServer.start();
     }
 }

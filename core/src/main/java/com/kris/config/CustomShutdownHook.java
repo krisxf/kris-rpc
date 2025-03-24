@@ -26,9 +26,12 @@ public class CustomShutdownHook {
 
     public void clearAll() {
         log.info("addShutdownHook for clearAll");
+        // 注册一个关闭钩子
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
+                // 获取本机 IP
                 InetSocketAddress inetSocketAddress = new InetSocketAddress(InetAddress.getLocalHost().getHostAddress(), NettyRpcServer.PORT);
+                // 从 Zookeeper 注册该服务
                 CuratorUtil.clearRegistry(CuratorUtil.getZkClient(), inetSocketAddress);
             } catch (UnknownHostException ignored) {
             }

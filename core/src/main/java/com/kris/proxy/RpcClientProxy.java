@@ -8,7 +8,6 @@ import com.kris.remote.dto.RpcRequest;
 import com.kris.remote.dto.RpcResponse;
 import com.kris.remote.transport.RpcRequestTransport;
 import com.kris.remote.transport.netty.client.NettyRpcClient;
-import com.kris.remote.transport.socket.SocketRpcClient;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,7 +62,7 @@ public class RpcClientProxy implements InvocationHandler {
     @SuppressWarnings("unchecked")
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
-        log.info("invoked method: [{}]", method.getName());
+        log.info("调用方法: [{}]", method.getName());
         RpcRequest rpcRequest = RpcRequest.builder().methodName(method.getName())
                 .parameters(args)
                 .interfaceName(method.getDeclaringClass().getName())
@@ -76,9 +75,6 @@ public class RpcClientProxy implements InvocationHandler {
         if (rpcRequestTransport instanceof NettyRpcClient) {
             CompletableFuture<RpcResponse<Object>> completableFuture = (CompletableFuture<RpcResponse<Object>>) rpcRequestTransport.sendRpcRequest(rpcRequest);
             rpcResponse = completableFuture.get();
-        }
-        if (rpcRequestTransport instanceof SocketRpcClient) {
-            rpcResponse = (RpcResponse<Object>) rpcRequestTransport.sendRpcRequest(rpcRequest);
         }
         this.check(rpcResponse, rpcRequest);
         return rpcResponse.getData();
