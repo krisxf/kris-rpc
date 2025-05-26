@@ -6,6 +6,8 @@ import com.kris.factory.SingletonFactory;
 import com.kris.remote.constant.RpcConstants;
 import com.kris.remote.dto.RpcMessage;
 import com.kris.remote.dto.RpcResponse;
+import com.kris.util.LogUtil;
+import com.kris.util.TraceContext;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,6 +18,7 @@ import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
+import java.time.LocalDateTime;
 
 /**
  * @Program: kris-rpc
@@ -40,19 +43,21 @@ public class NettyRpcClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         try {
-            log.info("服务端收到信息: [{}]", msg);
+            log.info("服务端返回信息: [{}]", msg);
             if (msg instanceof RpcMessage) {
                 RpcMessage tmp = (RpcMessage) msg;
                 byte messageType = tmp.getMessageType();
                 if (messageType == RpcConstants.HEARTBEAT_RESPONSE_TYPE) {
-                    log.info("heart [{}]", tmp.getData());
+                    log.info("[HEARTBEAT] 心跳 [{}]", tmp.getData());
                 } else if (messageType == RpcConstants.RESPONSE_TYPE) {
                     RpcResponse<Object> rpcResponse = (RpcResponse<Object>) tmp.getData();
                     unprocessedRequests.complete(rpcResponse);
+                    LogUtil.log(TraceContext.getTraceId(),"服务端返回信息接收成功！" , LocalDateTime.now());
                 }
             }
         } finally {
             ReferenceCountUtil.release(msg);
+            TraceContext.clear();
         }
     }
 
@@ -61,7 +66,7 @@ public class NettyRpcClientHandler extends ChannelInboundHandlerAdapter {
         if (evt instanceof IdleStateEvent) {
             IdleState state = ((IdleStateEvent) evt).state();
             if (state == IdleState.WRITER_IDLE) {
-                log.info("write idle happen [{}]", ctx.channel().remoteAddress());
+                log.info("[HEARTBEAT] 心跳检测发生 [{}]", ctx.channel().remoteAddress());
                 Channel channel = nettyRpcClient.getChannel((InetSocketAddress) ctx.channel().remoteAddress());
                 RpcMessage rpcMessage = new RpcMessage();
                 rpcMessage.setCodec(SerializationTypeEnum.PROTOSTUFF.getCode());
@@ -80,7 +85,7 @@ public class NettyRpcClientHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        log.error("client catch exception：", cause);
+        log.error("客户端异常捕获：", cause);
         cause.printStackTrace();
         ctx.close();
     }

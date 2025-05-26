@@ -9,11 +9,13 @@ import com.kris.remote.dto.RpcMessage;
 import com.kris.remote.dto.RpcRequest;
 import com.kris.remote.dto.RpcResponse;
 import com.kris.serialize.Serializer;
+import com.kris.util.LogUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 /**
@@ -108,9 +110,11 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
             if (messageType == RpcConstants.REQUEST_TYPE) {
                 RpcRequest tmpValue = serializer.deserialize(bs, RpcRequest.class);
                 rpcMessage.setData(tmpValue);
+                LogUtil.log(tmpValue.getRequestId(),"反序列化成功！反序列化算法：" + codecName , LocalDateTime.now());
             } else {
                 RpcResponse tmpValue = serializer.deserialize(bs, RpcResponse.class);
                 rpcMessage.setData(tmpValue);
+                LogUtil.log(tmpValue.getRequestId(),"反序列化成功！反序列化算法：" + codecName , LocalDateTime.now());
             }
         }
         return rpcMessage;

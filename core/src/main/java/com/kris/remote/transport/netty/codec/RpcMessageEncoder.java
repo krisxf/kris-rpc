@@ -6,12 +6,16 @@ import com.kris.enums.SerializationTypeEnum;
 import com.kris.extension.ExtensionLoader;
 import com.kris.remote.constant.RpcConstants;
 import com.kris.remote.dto.RpcMessage;
+import com.kris.remote.dto.RpcRequest;
+import com.kris.remote.dto.RpcResponse;
 import com.kris.serialize.Serializer;
+import com.kris.util.LogUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -52,6 +56,13 @@ public class RpcMessageEncoder extends MessageToByteEncoder<RpcMessage> {
                 // 序列化对象
                 String codecName = SerializationTypeEnum.getName(rpcMessage.getCodec());
                 log.info("codec name: [{}] ", codecName);
+                if (messageType == RpcConstants.REQUEST_TYPE) {
+                    RpcRequest tmpValue = (RpcRequest) rpcMessage.getData();
+                    LogUtil.log(tmpValue.getRequestId(),"序列化并封装信息体成功！序列化算法：" + codecName , LocalDateTime.now());
+                } else {
+                    RpcResponse tmpValue = (RpcResponse) rpcMessage.getData();
+                    LogUtil.log(tmpValue.getRequestId(),"序列化并封装信息体成功！序列化算法：" + codecName , LocalDateTime.now());
+                }
                 Serializer serializer = ExtensionLoader.getExtensionLoader(Serializer.class)
                         .getExtension(codecName);
                 bodyBytes = serializer.serialize(rpcMessage.getData());

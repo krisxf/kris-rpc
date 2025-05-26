@@ -5,10 +5,13 @@ import com.kris.factory.SingletonFactory;
 import com.kris.provider.ServiceProvider;
 import com.kris.provider.impl.ZkServiceProviderImpl;
 import com.kris.remote.dto.RpcRequest;
+import com.kris.util.LogUtil;
+import com.kris.util.TraceContext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
 
 /**
  * @Program: kris-rpc
@@ -46,6 +49,7 @@ public class RpcRequestHandler {
             Method method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());
             result = method.invoke(service, rpcRequest.getParameters());
             log.info("服务:[{}] 成功调用方法:[{}]", rpcRequest.getInterfaceName(), rpcRequest.getMethodName());
+            LogUtil.log(TraceContext.getTraceId(),"服务方成功调用方法！" + rpcRequest.getInterfaceName() +"-"+ rpcRequest.getMethodName() , LocalDateTime.now());
         } catch (NoSuchMethodException | IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
             throw new RpcException(e.getMessage(), e);
         }

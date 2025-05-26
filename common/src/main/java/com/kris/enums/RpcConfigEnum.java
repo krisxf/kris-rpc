@@ -16,7 +16,9 @@ public enum RpcConfigEnum {
     /** rpc 配置文件路径 */
     RPC_CONFIG_PATH("rpc.properties"),
     /** rpc zookeeper的地址 */
-    ZK_ADDRESS("rpc.zookeeper.address");
+    ZK_ADDRESS("rpc.zookeeper.address"),
+    /** rpc port */
+    PORT("rpc.port");
 
     private final String propertyValue;
 

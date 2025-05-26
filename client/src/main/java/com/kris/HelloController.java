@@ -1,6 +1,7 @@
 package com.kris;
 
 import com.kris.annotation.RpcConsumer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,17 +12,14 @@ import org.springframework.stereotype.Component;
  **/
 
 @Component
+@Slf4j
 public class HelloController {
-
     @RpcConsumer
     private HelloService helloService;
 
     public void test() throws InterruptedException {
-        String hello = this.helloService.sayHello("greetings!!!");
-        Thread.sleep(12000);
-        for (int i = 0; i < 3; i++) {
-            System.out.println(helloService.sayHello("greetings!!!"));
-        }
+        String hello = this.helloService.sayHello("hello");
+        log.info("调用结果返回：{}",hello);
     }
 
 

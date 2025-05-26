@@ -9,10 +9,13 @@ import com.kris.register.ServiceDiscovery;
 import com.kris.remote.dto.RpcRequest;
 import com.kris.util.CollectionUtil;
 import com.kris.util.CuratorUtil;
+import com.kris.util.LogUtil;
+import com.kris.util.TraceContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 
 import java.net.InetSocketAddress;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -39,8 +42,12 @@ public class ZkServiceDiscoveryImpl implements ServiceDiscovery {
             throw new RpcException(RpcErrorMessageEnum.SERVICE_CAN_NOT_BE_FOUND, rpcServiceName);
         }
         // 负载均衡
+        if(!serviceUrlList.isEmpty()){
+            LogUtil.log(TraceContext.getTraceId(),"找到服务地址", LocalDateTime.now());
+        }
         String targetServiceUrl = loadBalance.selectServiceAddress(serviceUrlList, rpcRequest);
         log.info("成功找到服务地址:[{}]", targetServiceUrl);
+        LogUtil.log(TraceContext.getTraceId(),"根据负载均衡策略选取服务地址: "+ targetServiceUrl, LocalDateTime.now());
         String[] socketAddressArray = targetServiceUrl.split(":");
         String host = socketAddressArray[0];
         int port = Integer.parseInt(socketAddressArray[1]);

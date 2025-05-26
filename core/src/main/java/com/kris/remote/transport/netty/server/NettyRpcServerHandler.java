@@ -9,6 +9,8 @@ import com.kris.remote.dto.RpcMessage;
 import com.kris.remote.dto.RpcRequest;
 import com.kris.remote.dto.RpcResponse;
 import com.kris.remote.handler.RpcRequestHandler;
+import com.kris.util.LogUtil;
+import com.kris.util.TraceContext;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -16,6 +18,8 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
+
+import java.time.LocalDateTime;
 
 /**
  * @Program: kris-rpc
@@ -47,9 +51,12 @@ public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
                     rpcMessage.setData(RpcConstants.PONG);
                 } else {
                     RpcRequest rpcRequest = (RpcRequest) ((RpcMessage) msg).getData();
+                    // 设置 TraceId
+                    TraceContext.setTraceId(rpcRequest.getRequestId());
                     // 执行目标方法（客户端需要执行的方法）并返回方法结果
                     Object result = rpcRequestHandler.handle(rpcRequest);
                     log.info(String.format("服务获取结果: %s", result.toString()));
+                    LogUtil.log(TraceContext.getTraceId(),"服务返回结果！" + result.toString() , LocalDateTime.now());
                     rpcMessage.setMessageType(RpcConstants.RESPONSE_TYPE);
                     if (ctx.channel().isActive() && ctx.channel().isWritable()) {
                         RpcResponse<Object> rpcResponse = RpcResponse.success(result, rpcRequest.getRequestId());
@@ -65,6 +72,7 @@ public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
         } finally {
             //确保ByteBuf已发布，否则可能会出现内存泄漏
             ReferenceCountUtil.release(msg);
+            TraceContext.clear();
         }
     }
 

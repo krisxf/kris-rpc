@@ -8,12 +8,15 @@ import com.kris.remote.dto.RpcRequest;
 import com.kris.remote.dto.RpcResponse;
 import com.kris.remote.transport.RpcRequestTransport;
 import com.kris.remote.transport.netty.client.NettyRpcClient;
+import com.kris.util.LogUtil;
+import com.kris.util.TraceContext;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -30,7 +33,7 @@ public class RpcClientProxy implements InvocationHandler {
     private static final String INTERFACE_NAME = "interfaceName";
 
     /**
-     * 用于向服务器发送请求。有两种实现：socket和netty
+     * 用于向服务器发送请求 netty
      */
     private final RpcRequestTransport rpcRequestTransport;
     private final RpcServiceConfig rpcServiceConfig;
@@ -63,11 +66,14 @@ public class RpcClientProxy implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
         log.info("调用方法: [{}]", method.getName());
+        String traceId = UUID.randomUUID().toString();
+        TraceContext.setTraceId(traceId);
+        LogUtil.log(TraceContext.getTraceId(),"调用方法: " + method.getName() , LocalDateTime.now());
         RpcRequest rpcRequest = RpcRequest.builder().methodName(method.getName())
                 .parameters(args)
                 .interfaceName(method.getDeclaringClass().getName())
                 .paramTypes(method.getParameterTypes())
-                .requestId(UUID.randomUUID().toString())
+                .requestId(traceId)
                 .group(rpcServiceConfig.getGroup())
                 .version(rpcServiceConfig.getVersion())
                 .build();

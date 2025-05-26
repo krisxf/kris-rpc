@@ -13,6 +13,8 @@ import com.kris.remote.dto.RpcResponse;
 import com.kris.remote.transport.RpcRequestTransport;
 import com.kris.remote.transport.netty.codec.RpcMessageDecoder;
 import com.kris.remote.transport.netty.codec.RpcMessageEncoder;
+import com.kris.util.LogUtil;
+import com.kris.util.TraceContext;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -25,6 +27,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
+import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -81,6 +84,7 @@ public final class NettyRpcClient implements RpcRequestTransport {
         bootstrap.connect(inetSocketAddress).addListener((ChannelFutureListener) future -> {
             if (future.isSuccess()) {
                 log.info("The client has connected [{}] successful!", inetSocketAddress.toString());
+                LogUtil.log(TraceContext.getTraceId(),"客户端连接成功 : " + inetSocketAddress.toString(), LocalDateTime.now());
                 completableFuture.complete(future.channel());
             } else {
                 throw new IllegalStateException();
@@ -107,6 +111,7 @@ public final class NettyRpcClient implements RpcRequestTransport {
             channel.writeAndFlush(rpcMessage).addListener((ChannelFutureListener) future -> {
                 if (future.isSuccess()) {
                     log.info("发送信息: [{}]", rpcMessage);
+                    LogUtil.log(TraceContext.getTraceId(),"成功发送信息！", LocalDateTime.now());
                 } else {
                     future.channel().close();
                     resultFuture.completeExceptionally(future.cause());

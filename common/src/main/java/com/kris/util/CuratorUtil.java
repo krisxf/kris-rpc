@@ -82,6 +82,18 @@ public final class CuratorUtil {
         return result;
     }
 
+    public static List<String> getNodes(CuratorFramework zkClient) {
+
+        List<String> result = null;
+        String servicePath = ZK_REGISTER_ROOT_PATH;
+        try {
+            result = zkClient.getChildren().forPath(servicePath);
+        } catch (Exception e) {
+            log.error("获取路径的子节点 [{}] 失败", servicePath);
+        }
+        return result;
+    }
+
     /**
      * 清空数据注册表
      */

@@ -1,8 +1,6 @@
-import com.kris.HelloService;
 import com.kris.annotation.RpcScan;
-import com.kris.config.RpcServiceConfig;
-import com.kris.impl.HelloServiceImpl;
 import com.kris.remote.transport.netty.server.NettyRpcServer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
@@ -13,15 +11,12 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  **/
 
 @RpcScan(basePackage = {"com.kris"})
+@Slf4j
 public class NettyServerMain {
     public static void main(String[] args) {
         // 注册服务
         AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(NettyServerMain.class);
         NettyRpcServer nettyRpcServer = (NettyRpcServer) applicationContext.getBean("nettyRpcServer");
-        HelloService helloService = new HelloServiceImpl();
-        RpcServiceConfig rpcServiceConfig = RpcServiceConfig.builder()
-                .service(helloService).build();
-        nettyRpcServer.registerService(rpcServiceConfig);
         nettyRpcServer.start();
     }
 }

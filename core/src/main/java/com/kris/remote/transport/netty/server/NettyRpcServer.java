@@ -2,11 +2,13 @@ package com.kris.remote.transport.netty.server;
 
 import com.kris.config.CustomShutdownHook;
 import com.kris.config.RpcServiceConfig;
+import com.kris.enums.RpcConfigEnum;
 import com.kris.factory.SingletonFactory;
 import com.kris.provider.ServiceProvider;
 import com.kris.provider.impl.ZkServiceProviderImpl;
 import com.kris.remote.transport.netty.codec.RpcMessageDecoder;
 import com.kris.remote.transport.netty.codec.RpcMessageEncoder;
+import com.kris.util.PropertiesFileUtil;
 import com.kris.util.RuntimeUtil;
 import com.kris.util.ThreadPoolFactoryUtil;
 import io.netty.bootstrap.ServerBootstrap;
@@ -23,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -36,7 +39,9 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class NettyRpcServer {
 
-    public static final int PORT = 9998;
+    static Properties properties = PropertiesFileUtil.readPropertiesFile(RpcConfigEnum.RPC_CONFIG_PATH.getPropertyValue());
+
+    public static final int PORT = properties != null && properties.getProperty(RpcConfigEnum.PORT.getPropertyValue()) != null ? Integer.parseInt(properties.getProperty(RpcConfigEnum.PORT.getPropertyValue())) : 9998;;
 
     private final ServiceProvider serviceProvider = SingletonFactory.getInstance(ZkServiceProviderImpl.class);
 
